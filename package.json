@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsup src",
+    "build": "tsup src !src/**/*.spec.*",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "test": "vitest run",
