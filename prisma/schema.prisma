@@ -18,7 +18,7 @@ model Measure {
   measure_type     MeasureType
   measure_value    Int
   image_url        String
-  has_confirmed    Boolean
+  has_confirmed    Boolean     @default(false)
   measure_datetime DateTime    @default(now())
 
   @@map("measures")
