@@ -29,15 +29,15 @@ export class InMemoryMeasuresRepository implements MeasuresRepository {
   }
 
   async findByMonthAndType({
-    customerCode,
-    measureMonth,
-    measureType,
+    customer_code,
+    measure_month,
+    measure_type,
   }: FindByMonthAndTypeParams): Promise<Measure | null> {
     const measure = this.measures.find((measure) => {
       if (
-        measure.customer_code === customerCode &&
-        new Date(measure.measure_datetime).getMonth() === measureMonth &&
-        measure.measure_type === measureType
+        measure.customer_code === customer_code &&
+        new Date(measure.measure_datetime).getMonth() === measure_month &&
+        measure.measure_type === measure_type
       ) {
         return measure
       }

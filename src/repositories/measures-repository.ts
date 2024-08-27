@@ -1,9 +1,9 @@
 import { Measure, MeasureType, Prisma } from '@prisma/client'
 
 export interface FindByMonthAndTypeParams {
-  customerCode: string
-  measureMonth: number
-  measureType: MeasureType
+  customer_code: string
+  measure_month: number
+  measure_type: MeasureType
 }
 
 export interface MeasuresRepository {

@@ -20,9 +20,9 @@ export class CreateMeasureUseCase {
 
     const measureAlreadyExists =
       await this.measuresRepository.findByMonthAndType({
-        customerCode: customer_code,
-        measureType: measure_type,
-        measureMonth,
+        customer_code,
+        measure_type,
+        measure_month: measureMonth,
       })
 
     if (measureAlreadyExists) {
