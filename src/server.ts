@@ -1,5 +1,5 @@
-const test = 'test'
+import { app } from './app'
 
-const testing = 'testing'
-
-console.log(test)
+app
+  .listen({ port: 3333 })
+  .then(() => console.log('Server running on http://localhost:3333'))
