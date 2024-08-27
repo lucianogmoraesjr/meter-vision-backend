@@ -1,4 +1,5 @@
 import { MeasuresRepository } from '@/repositories/measures-repository'
+import { DoubleReportError } from '../errors/double-report-error'
 
 interface CreateMeasureUseCaseRequest {
   image: File
@@ -15,6 +16,19 @@ export class CreateMeasureUseCase {
     measure_type,
     measure_datetime,
   }: CreateMeasureUseCaseRequest) {
+    const measureMonth = new Date(measure_datetime).getMonth()
+
+    const measureAlreadyExists =
+      await this.measuresRepository.findByMonthAndType({
+        customerCode: customer_code,
+        measureType: measure_type,
+        measureMonth,
+      })
+
+    if (measureAlreadyExists) {
+      throw new DoubleReportError()
+    }
+
     const measure_value = 1
     const image_url = 'http://localhost:3333/image.jpg'
 

@@ -2,7 +2,10 @@ import { randomUUID } from 'node:crypto'
 
 import { Measure, Prisma } from '@prisma/client'
 
-import { MeasuresRepository } from '../measures-repository'
+import {
+  FindByMonthAndTypeParams,
+  MeasuresRepository,
+} from '../measures-repository'
 
 export class InMemoryMeasuresRepository implements MeasuresRepository {
   public measures: Measure[] = []
@@ -21,6 +24,28 @@ export class InMemoryMeasuresRepository implements MeasuresRepository {
     }
 
     this.measures.push(measure)
+
+    return measure
+  }
+
+  async findByMonthAndType({
+    customerCode,
+    measureMonth,
+    measureType,
+  }: FindByMonthAndTypeParams): Promise<Measure | null> {
+    const measure = this.measures.find((measure) => {
+      if (
+        measure.customer_code === customerCode &&
+        new Date(measure.measure_datetime).getMonth() === measureMonth &&
+        measure.measure_type === measureType
+      ) {
+        return measure
+      }
+    })
+
+    if (!measure) {
+      return null
+    }
 
     return measure
   }
