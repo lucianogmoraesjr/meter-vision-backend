@@ -1,22 +1,29 @@
 import { InMemoryMeasuresRepository } from '@/repositories/in-memory/in-memory-measures-repository'
-import { createTestImage } from 'test/utils/create-test-image'
+import { FakeAIService } from 'test/services/ai-service/fake-ai-service'
+import { FakeStorageService } from 'test/services/storage-service/fake-storage-service'
 import { DoubleReportError } from '../errors/double-report-error'
 import { CreateMeasureUseCase } from './create-measure-use-case'
 
 let measuresRepository: InMemoryMeasuresRepository
+let storageService: FakeStorageService
+let AIService: FakeAIService
 let sut: CreateMeasureUseCase
 
 describe('Create measure use case', () => {
   beforeEach(() => {
     measuresRepository = new InMemoryMeasuresRepository()
-    sut = new CreateMeasureUseCase(measuresRepository)
+    storageService = new FakeStorageService()
+    AIService = new FakeAIService()
+    sut = new CreateMeasureUseCase(
+      measuresRepository,
+      storageService,
+      AIService,
+    )
   })
 
   it('should be able to create a measure', async () => {
-    const imageFile = await createTestImage('image-sample.jpeg', 'image/jpeg')
-
     const measure = await sut.execute({
-      image: imageFile,
+      image: 'some-valid-base-64-image',
       customer_code: 'customer-code',
       measure_datetime: new Date(),
       measure_type: 'WATER',
@@ -31,8 +38,6 @@ describe('Create measure use case', () => {
   })
 
   it('should not be able to create if there is already a measure in the month and same type', async () => {
-    const imageFile = await createTestImage('image-sample.jpeg', 'image/jpeg')
-
     await measuresRepository.create({
       image_url: 'image-url',
       customer_code: 'customer-code',
@@ -43,7 +48,7 @@ describe('Create measure use case', () => {
 
     await expect(
       sut.execute({
-        image: imageFile,
+        image: 'some-valid-base-64-image',
         customer_code: 'customer-code',
         measure_datetime: new Date(),
         measure_type: 'WATER',
@@ -52,8 +57,6 @@ describe('Create measure use case', () => {
   })
 
   it('should be able to create a measure in same month but different type', async () => {
-    const imageFile = await createTestImage('image-sample.jpeg', 'image/jpeg')
-
     await measuresRepository.create({
       image_url: 'image-url',
       customer_code: 'customer-code',
@@ -63,7 +66,7 @@ describe('Create measure use case', () => {
     })
 
     const measure = await sut.execute({
-      image: imageFile,
+      image: 'some-valid-base-64-image',
       customer_code: 'customer-code',
       measure_datetime: new Date(),
       measure_type: 'GAS',
