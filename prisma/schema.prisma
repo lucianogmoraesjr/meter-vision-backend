@@ -14,12 +14,13 @@ enum MeasureType {
 
 model Measure {
   id               String      @id @default(uuid())
-  customer_code    String      @unique
+  customer_code    String
   measure_type     MeasureType
   measure_value    Int
   image_url        String
   has_confirmed    Boolean     @default(false)
   measure_datetime DateTime    @default(now())
 
+  @@unique([customer_code, measure_type, measure_datetime])
   @@map("measures")
 }

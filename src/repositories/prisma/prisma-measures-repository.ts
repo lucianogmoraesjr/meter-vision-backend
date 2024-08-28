@@ -29,7 +29,7 @@ export class PrismaMeasuresRepository implements MeasuresRepository {
     endDate.setDate(0)
     endDate.setHours(23, 59, 59, 999)
 
-    const measure = await prisma.measure.findUnique({
+    const measure = await prisma.measure.findFirst({
       where: {
         customer_code,
         AND: {

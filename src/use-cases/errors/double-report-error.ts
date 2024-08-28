@@ -1,9 +1,15 @@
-export class DoubleReportError extends Error {
-  public readonly statusCode = 409
-  public readonly errorCode = 'DOUBLE_REPORT'
-  public readonly errorDescription = 'Leitura do mês já realizada'
+import { AppError } from '@/errors/app-error'
+
+export class DoubleReportError extends AppError {
+  public static readonly statusCode = 409
+  public static readonly errorCode = 'DOUBLE_REPORT'
+  public static readonly errorDescription = 'Leitura do mês já realizada'
 
   constructor() {
-    super()
+    super(
+      DoubleReportError.statusCode,
+      DoubleReportError.errorCode,
+      DoubleReportError.errorDescription,
+    )
   }
 }
