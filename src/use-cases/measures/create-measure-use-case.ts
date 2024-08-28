@@ -44,33 +44,28 @@ export class CreateMeasureUseCase {
     )
 
     const destination = path.resolve(__dirname, '../../../tmp', filename)
+    this.ensureDirectoryExists(path.dirname(destination))
+    const buffer = Buffer.from(image.base64, 'base64')
+    await fs.promises.writeFile(destination, buffer)
 
-    try {
-      this.ensureDirectoryExists(path.dirname(destination))
-      const buffer = Buffer.from(image.base64, 'base64')
-      await fs.promises.writeFile(destination, buffer)
+    // const imagePart = fileToGenerativePart(destination, 'image/jpeg')
+    // const prompt =
+    //   'You are receiving a photo of a consumption meter, this meter can be for water or gas. Return the integer value of the measured consumption.'
 
-      // const imagePart = fileToGenerativePart(destination, 'image/jpeg')
-      // const prompt =
-      //   'You are receiving a photo of a consumption meter, this meter can be for water or gas. Return the integer value of the measured consumption.'
+    // const { response } = await gemini.generateContent([prompt, imagePart])
 
-      // const { response } = await gemini.generateContent([prompt, imagePart])
+    // const measure_value = Number(response.text())
+    const image_url = `http://localhost:3333/tmp/${filename}`
 
-      // const measure_value = Number(response.text())
-      const image_url = `http://localhost:3333/tmp/${filename}`
+    const measure = await this.measuresRepository.create({
+      customer_code,
+      measure_type,
+      measure_datetime,
+      image_url,
+      measure_value: 1,
+    })
 
-      const measure = await this.measuresRepository.create({
-        customer_code,
-        measure_type,
-        measure_datetime,
-        image_url,
-        measure_value: 1,
-      })
-
-      return measure
-    } catch {
-      throw new Error(`Error processing measure`)
-    }
+    return measure
   }
 
   private generateUniqueFilename(

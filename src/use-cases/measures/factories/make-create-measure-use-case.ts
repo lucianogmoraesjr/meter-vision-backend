@@ -1,7 +1,7 @@
-import { InMemoryMeasuresRepository } from '@/repositories/in-memory/in-memory-measures-repository'
+import { PrismaMeasuresRepository } from '@/repositories/prisma/prisma-measures-repository'
 import { CreateMeasureUseCase } from '../create-measure-use-case'
 
 export function makeCreateMeasureUseCase() {
-  const measuresRepository = new InMemoryMeasuresRepository()
+  const measuresRepository = new PrismaMeasuresRepository()
   return new CreateMeasureUseCase(measuresRepository)
 }
