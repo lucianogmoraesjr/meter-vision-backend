@@ -30,7 +30,6 @@
     "vitest": "^2.0.5"
   },
   "dependencies": {
-    "@fastify/multipart": "^8.3.0",
     "@fastify/static": "^7.0.4",
     "@google/generative-ai": "^0.17.1",
     "@prisma/client": "5.19.0",
