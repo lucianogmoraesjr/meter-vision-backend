@@ -16,4 +16,5 @@ export interface MeasuresRepository {
   confirm(data: UpdateMeasureParams): Promise<Measure>
   findById(id: string): Promise<Measure | null>
   findByMonthAndType(data: FindByMonthAndTypeParams): Promise<Measure | null>
+  findAllByCustomerCode(customer_code: string): Promise<Measure[] | null>
 }
