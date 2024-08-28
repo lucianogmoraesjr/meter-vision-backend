@@ -24,5 +24,6 @@ export const fetchCustomerMeasureQueryStringSchema = z.object({
       },
     )
     .transform((value) => value as MeasureTypeEnum)
-    .optional(),
+    .optional()
+    .describe("It can be only 'WATER' or 'GAS'. Case insensitive."),
 })

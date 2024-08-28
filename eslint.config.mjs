@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint'
 export default [
   { files: ['**/*.{js,mjs,cjs,ts}'] },
   { languageOptions: { globals: globals.node } },
-  { ignores: ['dist/'] },
+  { ignores: ['dist/', 'swagger'] },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   eslintPluginPrettierRecommended,

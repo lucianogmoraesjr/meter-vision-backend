@@ -1,0 +1,205 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "MeterVision",
+    "description": "Especificações da API para o back-end da aplicação MeterVision, um serviço de backend para gerenciamento de leitura de consumo individual de água e gás, utilizando inteligência artificial para extrair medições a partir de fotos de medidores.",
+    "version": "1.0.0"
+  },
+  "definitions": {},
+  "paths": {
+    "/": {
+      "post": {
+        "tags": [
+          "measure"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "string",
+                      "contentEncoding": "base64"
+                    }
+                  ]
+                },
+                "customer_code": {
+                  "type": "string"
+                },
+                "measure_type": {
+                  "type": "string",
+                  "enum": [
+                    "WATER",
+                    "GAS"
+                  ]
+                },
+                "measure_datetime": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "image",
+                "customer_code",
+                "measure_type",
+                "measure_datetime"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "measure_value": {
+                  "type": "number"
+                },
+                "measure_uuid": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": [
+                "image_url",
+                "measure_value",
+                "measure_uuid"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_code": {
+                  "type": "string"
+                },
+                "error_description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error_code",
+                "error_description"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+    "/confirm": {
+      "patch": {
+        "tags": [
+          "measure"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "measure_uuid": {
+                  "type": "string"
+                },
+                "confirmed_value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "measure_uuid",
+                "confirmed_value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "success"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_code": {
+                  "type": "string"
+                },
+                "error_description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error_code",
+                "error_description"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+    "/{customerCode}/list": {
+      "get": {
+        "tags": [
+          "measure"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "It can be only 'WATER' or 'GAS'. Case insensitive.",
+            "required": false,
+            "in": "query",
+            "name": "measure_type"
+          },
+          {
+            "type": "string",
+            "required": true,
+            "in": "path",
+            "name": "customerCode"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    }
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ]
+}
