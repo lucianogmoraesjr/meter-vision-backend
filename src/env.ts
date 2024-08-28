@@ -8,7 +8,9 @@ const envSchema = z.object({
 const _env = envSchema.safeParse(process.env)
 
 if (_env.success === false) {
-  const errors = JSON.stringify(_env.error.flatten().fieldErrors)
+  const errors = Object.entries(_env.error.flatten().fieldErrors)
+    .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+    .join('; ')
 
   throw new Error(`Invalid environment variables: ${errors}`)
 }
