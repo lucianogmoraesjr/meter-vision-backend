@@ -1,56 +1,32 @@
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
-import z from 'zod'
 
 import { makeCreateMeasureUseCase } from '@/use-cases/measures/factories/make-create-measure-use-case'
+import {
+  createMeasureBodySchema,
+  createMeasureResponseSchema,
+} from './schemas/create-measure-schema'
 
 export const createMeasureController: FastifyPluginAsyncZod = async (app) => {
   app.post(
     '/',
     {
       schema: {
-        body: z.object({
-          image: z.string(),
-          customer_code: z.string(),
-          measure_type: z.enum(['WATER', 'GAS']),
-          measure_datetime: z.coerce.date(),
-        }),
-        response: {
-          201: z.object({
-            image_url: z.string().url(),
-            measure_value: z.number(),
-            measure_uuid: z.string().uuid(),
-          }),
-          400: z.object({
-            error_code: z.string(),
-            error_description: z.string(),
-          }),
-        },
+        body: createMeasureBodySchema,
+        response: createMeasureResponseSchema,
       },
     },
     async (request, reply) => {
       const { image, customer_code, measure_type, measure_datetime } =
         request.body
 
-      const [dataSchema, base64] = image.split(',')
-      const mimeMatch = dataSchema.match(/^data:image\/(png|jpg|jpeg);base64$/)
-
-      if (!mimeMatch) {
-        return reply.status(400).send({
-          error_code: 'INVALID_DATA',
-          error_description:
-            'Image must be in base64 format with PNG, JPEG, or JPG type.',
-        })
+      if (!image) {
+        return
       }
-
-      const mimeType = mimeMatch[1]
 
       const createMeasureUseCase = makeCreateMeasureUseCase()
 
       const measure = await createMeasureUseCase.execute({
-        image: {
-          base64,
-          mimeType,
-        },
+        image,
         customer_code,
         measure_datetime,
         measure_type,

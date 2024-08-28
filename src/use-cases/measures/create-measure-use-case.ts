@@ -1,7 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-import { fileToGenerativePart, gemini } from '@/lib/gemini'
 import { MeasuresRepository } from '@/repositories/measures-repository'
 import { DoubleReportError } from '../errors/double-report-error'
 
@@ -51,13 +50,13 @@ export class CreateMeasureUseCase {
       const buffer = Buffer.from(image.base64, 'base64')
       await fs.promises.writeFile(destination, buffer)
 
-      const imagePart = fileToGenerativePart(destination, 'image/jpeg')
-      const prompt =
-        'You are receiving a photo of a consumption meter, this meter can be for water or gas. Return the integer value of the measured consumption.'
+      // const imagePart = fileToGenerativePart(destination, 'image/jpeg')
+      // const prompt =
+      //   'You are receiving a photo of a consumption meter, this meter can be for water or gas. Return the integer value of the measured consumption.'
 
-      const { response } = await gemini.generateContent([prompt, imagePart])
+      // const { response } = await gemini.generateContent([prompt, imagePart])
 
-      const measure_value = Number(response.text())
+      // const measure_value = Number(response.text())
       const image_url = `http://localhost:3333/tmp/${filename}`
 
       const measure = await this.measuresRepository.create({
@@ -65,7 +64,7 @@ export class CreateMeasureUseCase {
         measure_type,
         measure_datetime,
         image_url,
-        measure_value,
+        measure_value: 1,
       })
 
       return measure
