@@ -11,10 +11,17 @@ export interface UpdateMeasureParams {
   confirmed_value: number
 }
 
+export interface FindAllByCustomerCodeParams {
+  customer_code: string
+  measure_type?: MeasureType
+}
+
 export interface MeasuresRepository {
   create(data: Prisma.MeasureCreateInput): Promise<Measure>
   confirm(data: UpdateMeasureParams): Promise<Measure>
   findById(id: string): Promise<Measure | null>
   findByMonthAndType(data: FindByMonthAndTypeParams): Promise<Measure | null>
-  findAllByCustomerCode(customer_code: string): Promise<Measure[] | null>
+  findAllByCustomerCode(
+    data: FindAllByCustomerCodeParams,
+  ): Promise<Measure[] | null>
 }

@@ -27,7 +27,9 @@ describe('Fetch customer measures use case', () => {
       measure_value: 120,
     })
 
-    const measures = await sut.execute('valid-customer-code')
+    const measures = await sut.execute({
+      customer_code: 'valid-customer-code',
+    })
 
     expect(measures).toEqual(
       expect.objectContaining({
@@ -39,8 +41,44 @@ describe('Fetch customer measures use case', () => {
     )
   })
 
+  it('should be able to fetch customer measures filtering by water', async () => {
+    await measuresRepository.create({
+      customer_code: 'valid-customer-code',
+      image_url: 'image-url',
+      measure_type: 'GAS',
+      measure_value: 100,
+      has_confirmed: true,
+    })
+
+    await measuresRepository.create({
+      customer_code: 'valid-customer-code',
+      image_url: 'image-url',
+      measure_type: 'WATER',
+      measure_value: 120,
+    })
+
+    const measures = await sut.execute({
+      customer_code: 'valid-customer-code',
+      query: 'WATER',
+    })
+
+    expect(measures).toEqual(
+      expect.objectContaining({
+        customer_code: expect.any(String),
+        measures: [
+          expect.objectContaining({
+            measure_uuid: expect.any(String),
+            measure_type: 'WATER',
+          }),
+        ],
+      }),
+    )
+  })
+
   it('should not be able to fetch a nonexistent customer measures', async () => {
-    await expect(sut.execute('nonexistent-customer-code')).rejects.toThrowError(
+    await expect(
+      sut.execute({ customer_code: 'nonexistent-customer-code' }),
+    ).rejects.toThrowError(
       new NotFoundError('MEASURES_NOT_FOUND', 'Nenhuma leitura encontrada'),
     )
   })

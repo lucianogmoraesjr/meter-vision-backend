@@ -1,12 +1,19 @@
 import { MeasuresRepository } from '@/repositories/measures-repository'
 import { NotFoundError } from '../errors/not-found-error'
 
+interface FetchCustomerMeasuresUseCaseRequest {
+  customer_code: string
+  query?: 'WATER' | 'GAS'
+}
+
 export class FetchCustomerMeasuresUseCase {
   constructor(private measuresRepository: MeasuresRepository) {}
 
-  async execute(customer_code: string) {
-    const measures =
-      await this.measuresRepository.findAllByCustomerCode(customer_code)
+  async execute({ customer_code, query }: FetchCustomerMeasuresUseCaseRequest) {
+    const measures = await this.measuresRepository.findAllByCustomerCode({
+      customer_code,
+      measure_type: query,
+    })
 
     if (!measures) {
       throw new NotFoundError(

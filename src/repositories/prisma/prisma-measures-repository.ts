@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { Measure, Prisma } from '@prisma/client'
 import {
+  FindAllByCustomerCodeParams,
   FindByMonthAndTypeParams,
   MeasuresRepository,
   UpdateMeasureParams,
@@ -42,13 +43,19 @@ export class PrismaMeasuresRepository implements MeasuresRepository {
     return measure
   }
 
-  async findAllByCustomerCode(
-    customer_code: string,
-  ): Promise<Measure[] | null> {
+  async findAllByCustomerCode({
+    customer_code,
+    measure_type,
+  }: FindAllByCustomerCodeParams): Promise<Measure[] | null> {
     const measures = await prisma.measure.findMany({
-      where: {
-        customer_code,
-      },
+      where: measure_type
+        ? {
+            customer_code,
+            measure_type,
+          }
+        : {
+            customer_code,
+          },
     })
 
     if (measures.length === 0) {

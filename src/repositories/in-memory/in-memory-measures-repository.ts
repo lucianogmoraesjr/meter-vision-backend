@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto'
 import { Measure, Prisma } from '@prisma/client'
 
 import {
+  FindAllByCustomerCodeParams,
   FindByMonthAndTypeParams,
   MeasuresRepository,
   UpdateMeasureParams,
@@ -55,12 +56,24 @@ export class InMemoryMeasuresRepository implements MeasuresRepository {
     return measure
   }
 
-  async findAllByCustomerCode(
-    customer_code: string,
-  ): Promise<Measure[] | null> {
-    const measures = this.measures.filter(
-      (measure) => measure.customer_code === customer_code,
-    )
+  async findAllByCustomerCode({
+    customer_code,
+    measure_type,
+  }: FindAllByCustomerCodeParams): Promise<Measure[] | null> {
+    const measures = this.measures.filter((measure) => {
+      if (measure_type) {
+        if (
+          measure.customer_code === customer_code &&
+          measure.measure_type === measure_type
+        ) {
+          return measure
+        }
+      } else {
+        if (measure.customer_code === customer_code) {
+          return measure
+        }
+      }
+    })
 
     if (measures.length === 0) {
       return null
