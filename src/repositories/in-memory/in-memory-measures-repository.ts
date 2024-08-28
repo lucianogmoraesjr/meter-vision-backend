@@ -5,6 +5,7 @@ import { Measure, Prisma } from '@prisma/client'
 import {
   FindByMonthAndTypeParams,
   MeasuresRepository,
+  UpdateMeasureParams,
 } from '../measures-repository'
 
 export class InMemoryMeasuresRepository implements MeasuresRepository {
@@ -17,13 +18,39 @@ export class InMemoryMeasuresRepository implements MeasuresRepository {
     const measure: Measure = {
       ...data,
       id: randomUUID(),
-      has_confirmed: false,
+      has_confirmed: data.has_confirmed ?? false,
       measure_datetime: measure_datetime
         ? new Date(measure_datetime)
         : new Date(),
     }
 
     this.measures.push(measure)
+
+    return measure
+  }
+
+  async confirm({
+    confirmed_value,
+    measure_uuid,
+  }: UpdateMeasureParams): Promise<Measure> {
+    const measureIndex = this.measures.findIndex(
+      (measure) => measure.id === measure_uuid,
+    )
+
+    if (measureIndex >= 0) {
+      this.measures[measureIndex].measure_value = confirmed_value
+      this.measures[measureIndex].has_confirmed = true
+    }
+
+    return this.measures[measureIndex]
+  }
+
+  async findById(id: string): Promise<Measure | null> {
+    const measure = this.measures.find((measure) => measure.id === id)
+
+    if (!measure) {
+      return null
+    }
 
     return measure
   }

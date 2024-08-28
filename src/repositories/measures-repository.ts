@@ -6,7 +6,14 @@ export interface FindByMonthAndTypeParams {
   measure_type: MeasureType
 }
 
+export interface UpdateMeasureParams {
+  measure_uuid: string
+  confirmed_value: number
+}
+
 export interface MeasuresRepository {
   create(data: Prisma.MeasureCreateInput): Promise<Measure>
+  confirm(data: UpdateMeasureParams): Promise<Measure>
+  findById(id: string): Promise<Measure | null>
   findByMonthAndType(data: FindByMonthAndTypeParams): Promise<Measure | null>
 }
