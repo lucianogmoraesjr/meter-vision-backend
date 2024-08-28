@@ -1,5 +1,5 @@
-import { fileToGenerativePart, gemini } from '@/lib/gemini'
 import { MeasuresRepository } from '@/repositories/measures-repository'
+import { AIService } from '@/services/ai-service/ai-service'
 import { StorageService } from '@/services/storage-service/storage-service'
 import { DoubleReportError } from '../errors/double-report-error'
 
@@ -14,6 +14,7 @@ export class CreateMeasureUseCase {
   constructor(
     private readonly measuresRepository: MeasuresRepository,
     private readonly storageService: StorageService,
+    private readonly AIService: AIService,
   ) {}
 
   async execute({
@@ -35,22 +36,21 @@ export class CreateMeasureUseCase {
       throw new DoubleReportError()
     }
 
-    const { image_url } = await this.storageService.upload(image)
+    const { image_url, filename, mimeType } =
+      await this.storageService.upload(image)
 
-    const imagePart = fileToGenerativePart(destination, 'image/jpeg')
-    const prompt =
-      'You are receiving a photo of a consumption meter, this meter can be for water or gas. Return the integer value of the measured consumption.'
-
-    const { response } = await gemini.generateContent([prompt, imagePart])
-
-    const measure_value = Number(response.text())
+    const value = await this.AIService.getValueFromImage({
+      filename,
+      image_url,
+      mimeType,
+    })
 
     const measure = await this.measuresRepository.create({
       customer_code,
       measure_type,
       measure_datetime,
       image_url,
-      measure_value: 1,
+      measure_value: Number(value),
     })
 
     return measure
