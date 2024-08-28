@@ -3,12 +3,40 @@ import { Measure, Prisma } from '@prisma/client'
 import {
   FindByMonthAndTypeParams,
   MeasuresRepository,
+  UpdateMeasureParams,
 } from '../measures-repository'
 
 export class PrismaMeasuresRepository implements MeasuresRepository {
   async create(data: Prisma.MeasureCreateInput): Promise<Measure> {
     const measure = await prisma.measure.create({
       data,
+    })
+
+    return measure
+  }
+
+  async confirm({
+    confirmed_value,
+    measure_uuid,
+  }: UpdateMeasureParams): Promise<Measure> {
+    const measure = await prisma.measure.update({
+      where: {
+        id: measure_uuid,
+      },
+      data: {
+        measure_value: confirmed_value,
+        has_confirmed: true,
+      },
+    })
+
+    return measure
+  }
+
+  async findById(id: string): Promise<Measure | null> {
+    const measure = await prisma.measure.findUnique({
+      where: {
+        id,
+      },
     })
 
     return measure
