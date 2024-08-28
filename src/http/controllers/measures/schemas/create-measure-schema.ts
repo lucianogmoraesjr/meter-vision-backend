@@ -12,21 +12,12 @@ export const imageSchema = z
         'Invalid image format. Must be a valid base64 image string with PNG, JPEG, or JPG type.',
     },
   )
-  .transform((value) => {
-    const [dataSchema, base64] = value.split(',')
-    const mimeTypeMatches = dataSchema.match(
-      /^data:image\/(png|jpg|jpeg);base64/,
-    )
-
-    if (!mimeTypeMatches) {
-      return
-    }
-
-    return {
-      base64,
-      mimeType: mimeTypeMatches[1],
-    }
-  })
+  .or(
+    z.string().base64({
+      message:
+        'Invalid image format. Must be a valid base64 image string with PNG, JPEG, or JPG type.',
+    }),
+  )
 
 export const createMeasureBodySchema = z.object({
   image: imageSchema,

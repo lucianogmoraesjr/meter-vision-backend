@@ -19,10 +19,6 @@ export const createMeasureController: FastifyPluginAsyncZod = async (app) => {
       const { image, customer_code, measure_type, measure_datetime } =
         request.body
 
-      if (!image) {
-        return
-      }
-
       const createMeasureUseCase = makeCreateMeasureUseCase()
 
       const measure = await createMeasureUseCase.execute({

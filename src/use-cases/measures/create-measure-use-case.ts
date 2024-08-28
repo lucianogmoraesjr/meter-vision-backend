@@ -1,21 +1,20 @@
-import fs from 'node:fs'
-import path from 'node:path'
-
+import { fileToGenerativePart, gemini } from '@/lib/gemini'
 import { MeasuresRepository } from '@/repositories/measures-repository'
+import { StorageService } from '@/services/storage-service/storage-service'
 import { DoubleReportError } from '../errors/double-report-error'
 
 interface CreateMeasureUseCaseRequest {
-  image: {
-    base64: string
-    mimeType: string
-  }
+  image: string
   customer_code: string
   measure_datetime: Date
   measure_type: 'WATER' | 'GAS'
 }
 
 export class CreateMeasureUseCase {
-  constructor(private readonly measuresRepository: MeasuresRepository) {}
+  constructor(
+    private readonly measuresRepository: MeasuresRepository,
+    private readonly storageService: StorageService,
+  ) {}
 
   async execute({
     customer_code,
@@ -36,26 +35,15 @@ export class CreateMeasureUseCase {
       throw new DoubleReportError()
     }
 
-    const filename = this.generateUniqueFilename(
-      customer_code,
-      measure_type,
-      measure_datetime,
-      image.mimeType,
-    )
+    const { image_url } = await this.storageService.upload(image)
 
-    const destination = path.resolve(__dirname, '../../../tmp', filename)
-    this.ensureDirectoryExists(path.dirname(destination))
-    const buffer = Buffer.from(image.base64, 'base64')
-    await fs.promises.writeFile(destination, buffer)
+    const imagePart = fileToGenerativePart(destination, 'image/jpeg')
+    const prompt =
+      'You are receiving a photo of a consumption meter, this meter can be for water or gas. Return the integer value of the measured consumption.'
 
-    // const imagePart = fileToGenerativePart(destination, 'image/jpeg')
-    // const prompt =
-    //   'You are receiving a photo of a consumption meter, this meter can be for water or gas. Return the integer value of the measured consumption.'
+    const { response } = await gemini.generateContent([prompt, imagePart])
 
-    // const { response } = await gemini.generateContent([prompt, imagePart])
-
-    // const measure_value = Number(response.text())
-    const image_url = `http://localhost:3333/tmp/${filename}`
+    const measure_value = Number(response.text())
 
     const measure = await this.measuresRepository.create({
       customer_code,
@@ -66,22 +54,5 @@ export class CreateMeasureUseCase {
     })
 
     return measure
-  }
-
-  private generateUniqueFilename(
-    customer_code: string,
-    measure_type: 'WATER' | 'GAS',
-    measure_datetime: Date,
-    mimeType: string,
-  ) {
-    const extension = mimeType === 'jpeg' ? 'jpg' : mimeType
-    const timestamp = new Date(measure_datetime).getTime()
-    return `${customer_code}-${measure_type.toLowerCase()}-${timestamp}.${extension}`
-  }
-
-  private ensureDirectoryExists(directory: string) {
-    if (!fs.existsSync(directory)) {
-      fs.mkdirSync(directory, { recursive: true })
-    }
   }
 }
