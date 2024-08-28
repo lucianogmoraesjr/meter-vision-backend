@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsup src !src/**/*.spec.*",
-    "start": "node dist/server.js",
-    "dev": "tsx watch src/server.ts",
+    "start": "node --env-file .env dist/server.js",
+    "dev": "tsx watch --env-file .env src/server.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -32,6 +32,7 @@
   "dependencies": {
     "@fastify/multipart": "^8.3.0",
     "@fastify/static": "^7.0.4",
+    "@google/generative-ai": "^0.17.1",
     "@prisma/client": "5.19.0",
     "fastify": "^4.28.1",
     "fastify-type-provider-zod": "^2.0.0",

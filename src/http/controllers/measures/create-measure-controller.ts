@@ -1,6 +1,3 @@
-import fs from 'node:fs'
-import path from 'node:path'
-
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
 
@@ -17,6 +14,17 @@ export const createMeasureController: FastifyPluginAsyncZod = async (app) => {
           measure_type: z.enum(['WATER', 'GAS']),
           measure_datetime: z.coerce.date(),
         }),
+        response: {
+          201: z.object({
+            image_url: z.string().url(),
+            measure_value: z.number(),
+            measure_uuid: z.string().uuid(),
+          }),
+          400: z.object({
+            error_code: z.string(),
+            error_description: z.string(),
+          }),
+        },
       },
     },
     async (request, reply) => {
@@ -35,27 +43,24 @@ export const createMeasureController: FastifyPluginAsyncZod = async (app) => {
       }
 
       const mimeType = mimeMatch[1]
-      const extension = mimeType === 'jpeg' ? 'jpg' : mimeType
-      const timestamp = new Date(measure_datetime).getTime()
-      const filename = `${customer_code}-${measure_type.toLowerCase()}-${timestamp}.${extension}`
-
-      const destination = path.resolve(__dirname, '../../../../tmp', filename)
-      const buffer = Buffer.from(base64, 'base64')
-
-      await fs.promises.writeFile(destination, buffer)
-
-      const file = new File([buffer], filename)
 
       const createMeasureUseCase = makeCreateMeasureUseCase()
 
-      const result = await createMeasureUseCase.execute({
-        image: file,
+      const measure = await createMeasureUseCase.execute({
+        image: {
+          base64,
+          mimeType,
+        },
         customer_code,
         measure_datetime,
         measure_type,
       })
 
-      return reply.send(result)
+      return reply.status(201).send({
+        image_url: measure.image_url,
+        measure_uuid: measure.id,
+        measure_value: measure.measure_value,
+      })
     },
   )
 }
