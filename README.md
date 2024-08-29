@@ -4,6 +4,8 @@
 
 <p id="description">O MeterVision é uma aplicação inovadora projetada o para gerenciamento de leitura de consumo individual de água e gás, utilizando inteligência artificial para extrair medições a partir de fotos de medidores.</p>
 
+<p>As especificações da API podem ser consultadas em: <a href="https://metervision.apidocumentation.com/" target="_blank">https://metervision.apidocumentation.com/</a></p>
+
 <h2>🧐 Funcionalidades</h2>
 
 Aqui estão algumas das melhores funcionalidades do projeto:
