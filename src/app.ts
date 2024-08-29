@@ -45,8 +45,8 @@ app.setValidatorCompiler(validatorCompiler)
 app.register(routes)
 
 app.register(fastifyStatic, {
-  root: path.join(__dirname, '..'),
-  prefix: '/',
+  root: path.join(__dirname, '..', 'tmp'),
+  prefix: '/tmp/',
 })
 
 app.setErrorHandler((error, _, reply) => {

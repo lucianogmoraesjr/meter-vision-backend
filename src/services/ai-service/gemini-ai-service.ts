@@ -8,8 +8,12 @@ export class GeminiAiService implements AIService {
     const destination = path.resolve(__dirname, '../../../tmp', filename)
 
     const imagePart = fileToGenerativePart(destination, mimeType)
-    const prompt =
-      'You are receiving a photo of a consumption meter, this meter can be for water or gas. Return the integer value of the measured consumption.'
+    const prompt = `
+      You are receiving a photo of a consumption meter,
+      this meter can be for water or gas. Return just the integer value of the measured consumption.
+      For example: if the measured value is 0031.56, return 3156. Or if the measured value is 00166.815, return 166815.
+      If you can't read the value in the image, return -1.
+    `
 
     const { response } = await gemini.generateContent([prompt, imagePart])
 
