@@ -1,4 +1,4 @@
-<h1 align="center" id="title">SmartOrder API</h1>
+<h1 align="center" id="title">MeterVision API</h1>
 
 <p align="center"><img src="https://socialify.git.ci/lucianogmoraesjr/meter-vision-backend/image?forks=1&issues=1&language=1&name=1&owner=1&pattern=Solid&stargazers=1&theme=Auto" alt="project-image"></p>
 
