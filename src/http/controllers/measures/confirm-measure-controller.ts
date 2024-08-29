@@ -10,6 +10,7 @@ export const confirmMeasureController: FastifyPluginAsyncZod = async (app) => {
     '/confirm',
     {
       schema: {
+        summary: 'Confirm measure',
         body: confirmMeasureBodySchema,
         response: confirmMeasureResponseSchema,
       },

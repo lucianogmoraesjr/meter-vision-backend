@@ -12,6 +12,7 @@ export const fetchCustomerMeasuresController: FastifyPluginAsyncZod = async (
     '/:customerCode/list',
     {
       schema: {
+        summary: 'Fetch all measures by customer_code',
         params: fetchCustomerMeasureParamsSchema,
         querystring: fetchCustomerMeasureQueryStringSchema,
       },

@@ -5,7 +5,7 @@ import { fetchCustomerMeasuresController } from './fetch-customer-measures-contr
 
 export async function measuresRoutes(app: FastifyInstance) {
   app.addHook('onRoute', (routeOptions) => {
-    if (routeOptions.schema) routeOptions.schema.tags = ['measure']
+    if (routeOptions.schema) routeOptions.schema.tags = ['measures']
   })
 
   app.register(createMeasureController)

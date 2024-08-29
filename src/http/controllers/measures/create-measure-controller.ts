@@ -11,6 +11,7 @@ export const createMeasureController: FastifyPluginAsyncZod = async (app) => {
     '/',
     {
       schema: {
+        summary: 'Create an measure',
         body: createMeasureBodySchema,
         response: createMeasureResponseSchema,
       },
