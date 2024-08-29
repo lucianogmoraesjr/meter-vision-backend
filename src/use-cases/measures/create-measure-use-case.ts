@@ -1,6 +1,7 @@
 import { MeasuresRepository } from '@/repositories/measures-repository'
 import { AIService } from '@/services/ai-service/ai-service'
 import { StorageService } from '@/services/storage-service/storage-service'
+import { BadImageError } from '../errors/bad-image-error'
 import { DoubleReportError } from '../errors/double-report-error'
 
 interface CreateMeasureUseCaseRequest {
@@ -44,6 +45,10 @@ export class CreateMeasureUseCase {
       image_url,
       mimeType,
     })
+
+    if (Number(value) === -1) {
+      throw new BadImageError()
+    }
 
     const measure = await this.measuresRepository.create({
       customer_code,
