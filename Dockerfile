@@ -14,4 +14,6 @@ RUN pnpm install
 
 RUN pnpm build
 
+RUN pnpm prisma generate
+
 EXPOSE 3333
