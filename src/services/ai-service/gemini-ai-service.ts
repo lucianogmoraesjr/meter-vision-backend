@@ -5,7 +5,8 @@ import { AIService, Image } from './ai-service'
 
 export class GeminiAiService implements AIService {
   async getValueFromImage({ filename, mimeType }: Image): Promise<string> {
-    const destination = path.resolve(__dirname, '../../../tmp', filename)
+    const baseDir = path.resolve(process.cwd(), 'tmp')
+    const destination = path.join(baseDir, filename)
 
     const imagePart = fileToGenerativePart(destination, mimeType)
     const prompt = `

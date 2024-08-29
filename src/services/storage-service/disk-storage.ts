@@ -22,8 +22,11 @@ export class DiskStorage implements StorageService {
 
     const filename = `${randomUUID()}.${extension}`
 
-    const destination = path.resolve(__dirname, '../../../tmp', filename)
+    const baseDir = path.resolve(process.cwd(), 'tmp')
+    const destination = path.join(baseDir, filename)
+
     this.ensureDirectoryExists(path.dirname(destination))
+
     const buffer = Buffer.from(base64, 'base64')
     await fs.promises.writeFile(destination, buffer)
 
