@@ -1,8 +1,10 @@
-import { makeFetchCustomerMeasuresUseCase } from '@/use-cases/measures/factories/make-fetch-customer-measures-use-case'
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
+
+import { makeFetchCustomerMeasuresUseCase } from '@/use-cases/measures/factories/make-fetch-customer-measures-use-case'
 import {
   fetchCustomerMeasureParamsSchema,
   fetchCustomerMeasureQueryStringSchema,
+  fetchCustomerMeasureResponseSchema,
 } from './schemas/fetch-customer-measures-schema'
 
 export const fetchCustomerMeasuresController: FastifyPluginAsyncZod = async (
@@ -15,6 +17,7 @@ export const fetchCustomerMeasuresController: FastifyPluginAsyncZod = async (
         summary: 'Fetch all measures by customer_code',
         params: fetchCustomerMeasureParamsSchema,
         querystring: fetchCustomerMeasureQueryStringSchema,
+        response: fetchCustomerMeasureResponseSchema,
       },
     },
     async (request, reply) => {

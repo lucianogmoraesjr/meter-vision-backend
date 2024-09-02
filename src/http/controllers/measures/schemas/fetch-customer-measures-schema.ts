@@ -27,3 +27,17 @@ export const fetchCustomerMeasureQueryStringSchema = z.object({
     .optional()
     .describe("It can be only 'WATER' or 'GAS'. Case insensitive."),
 })
+
+export const fetchCustomerMeasureResponseSchema = {
+  200: z.object({
+    customer_code: z.string(),
+    measures: z.array(
+      z.object({
+        measure_uuid: z.string().uuid(),
+        measure_datetime: z.coerce.date(),
+        has_confirmed: z.boolean(),
+        image_url: z.string().url(),
+      }),
+    ),
+  }),
+}
